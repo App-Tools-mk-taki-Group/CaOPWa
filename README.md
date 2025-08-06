@@ -26,4 +26,6 @@ https://github.com/mikancat-taki/mikancat-CaOPWa/blob/main/%E3%82%A2%E3%83%97%E3
 
 https://github.com/mikancat-taki/mikancat-CaOPWa/blob/main/%E3%82%A2%E3%83%97%E3%83%AA%E3%81%AE%E4%BD%BF%E3%81%84%E3%82%84%E3%81%99%E3%81%95.md
 
+https://github.com/mikancat-taki/mikancat-CaOPWa/blob/main/%E5%8F%82%E8%80%83%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA.md
+
 2025©CaOPWa

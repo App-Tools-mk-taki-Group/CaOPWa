@@ -2,6 +2,10 @@ CaOPWa
 
 <img width="3000" height="1000" alt="アプリ画像" src="https://github.com/user-attachments/assets/6833f46b-a5d4-4313-b1bd-750b7e0224bc" />
 
+追加、修正
+
+https://github.com/App-Tools-mk-taki-Group/CaOPWa/blob/main/%E8%BF%BD%E5%8A%A0.md
+
 ドキュメント
 
 https://github.com/App-Tools-mk-taki-Group/CaOPWa/blob/main/Docs.md

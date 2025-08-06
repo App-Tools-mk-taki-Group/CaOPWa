@@ -20,6 +20,8 @@ https://github.com/App-Tools-mk-taki-Group/CaOPWa/blob/main/Docs.md
 
 ・翻訳
 
+・メモ
+
 ・その他ツール
 
 メール

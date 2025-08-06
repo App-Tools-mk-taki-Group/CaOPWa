@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Send, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { useQuery } from "@tanstack/react-query";
+import { VirtualKeyboard } from "./virtual-keyboard";
 
 interface ChatMessage {
   id: string;
@@ -17,6 +18,7 @@ export default function Chat() {
   const [currentRoom, setCurrentRoom] = useState("general");
   const [inputMessage, setInputMessage] = useState("");
   const [username] = useState("User" + Math.floor(Math.random() * 1000));
+  const [showKeyboard, setShowKeyboard] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const { isConnected, messages: wsMessages, sendChatMessage, joinRoom, setMessages } = useWebSocket();
@@ -28,7 +30,7 @@ export default function Chat() {
   });
 
   useEffect(() => {
-    if (existingMessages) {
+    if (existingMessages && Array.isArray(existingMessages)) {
       setMessages(existingMessages);
     }
   }, [existingMessages, setMessages]);
@@ -52,6 +54,18 @@ export default function Chat() {
     if (e.key === "Enter") {
       handleSendMessage();
     }
+  };
+
+  const handleKeyboardInput = (key: string) => {
+    setInputMessage(inputMessage + key);
+  };
+
+  const handleKeyboardBackspace = () => {
+    setInputMessage(inputMessage.slice(0, -1));
+  };
+
+  const handleKeyboardSpace = () => {
+    setInputMessage(inputMessage + ' ');
   };
 
   const rooms = [
@@ -144,6 +158,13 @@ export default function Chat() {
           data-testid="input-chat-message"
         />
         <Button
+          onClick={() => setShowKeyboard(!showKeyboard)}
+          className="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded-lg transition-all"
+          data-testid="button-toggle-keyboard"
+        >
+          <Keyboard size={16} />
+        </Button>
+        <Button
           onClick={handleSendMessage}
           disabled={!isConnected || !inputMessage.trim()}
           className="bg-[hsl(174,100%,70%)] text-[hsl(217,41%,11%)] px-4 py-2 rounded-lg hover:bg-opacity-80 transition-all disabled:opacity-50"
@@ -152,6 +173,15 @@ export default function Chat() {
           <Send size={16} />
         </Button>
       </div>
+
+      {/* Virtual Keyboard */}
+      <VirtualKeyboard
+        visible={showKeyboard}
+        onKeyPress={handleKeyboardInput}
+        onBackspace={handleKeyboardBackspace}
+        onSpace={handleKeyboardSpace}
+        onClose={() => setShowKeyboard(false)}
+      />
     </div>
   );
 }

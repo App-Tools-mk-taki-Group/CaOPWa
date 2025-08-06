@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Languages, RotateCcw } from "lucide-react";
+import { Languages, RotateCcw, Keyboard } from "lucide-react";
+import { VirtualKeyboard } from "./virtual-keyboard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,7 @@ export default function Translator() {
   const [toLanguage, setToLanguage] = useState("ja");
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
+  const [showKeyboard, setShowKeyboard] = useState(false);
 
   const handleTranslate = () => {
     if (inputText.trim()) {
@@ -27,6 +29,18 @@ export default function Translator() {
     setToLanguage(fromLanguage);
     setInputText(outputText);
     setOutputText(inputText);
+  };
+
+  const handleKeyboardInput = (key: string) => {
+    setInputText(inputText + key);
+  };
+
+  const handleKeyboardBackspace = () => {
+    setInputText(inputText.slice(0, -1));
+  };
+
+  const handleKeyboardSpace = () => {
+    setInputText(inputText + ' ');
   };
 
   return (
@@ -83,7 +97,18 @@ export default function Translator() {
       
       {/* Input Text */}
       <div className="mb-4">
-        <label className="block text-sm font-medium mb-2 cosmic-accent">Input Text</label>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-sm font-medium cosmic-accent">Input Text</label>
+          <Button
+            onClick={() => setShowKeyboard(!showKeyboard)}
+            variant="outline"
+            size="sm"
+            className="border-cosmic-accent/30 text-cosmic-accent hover:bg-cosmic-accent/20"
+            data-testid="button-toggle-keyboard-translator"
+          >
+            <Keyboard size={14} />
+          </Button>
+        </div>
         <Textarea
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
@@ -134,6 +159,15 @@ export default function Translator() {
           ))}
         </div>
       </div>
+
+      {/* Virtual Keyboard */}
+      <VirtualKeyboard
+        visible={showKeyboard}
+        onKeyPress={handleKeyboardInput}
+        onBackspace={handleKeyboardBackspace}
+        onSpace={handleKeyboardSpace}
+        onClose={() => setShowKeyboard(false)}
+      />
     </div>
   );
 }

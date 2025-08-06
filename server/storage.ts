@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type ChatMessage, type InsertChatMessage } from "@shared/schema";
+import { type User, type InsertUser, type ChatMessage, type InsertChatMessage, type Note, type InsertNote } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -7,15 +7,22 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   getChatMessages(room: string, limit?: number): Promise<ChatMessage[]>;
   addChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
+  getNotes(): Promise<Note[]>;
+  getNote(id: string): Promise<Note | undefined>;
+  createNote(note: InsertNote): Promise<Note>;
+  updateNote(id: string, note: Partial<InsertNote>): Promise<Note | undefined>;
+  deleteNote(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private chatMessages: ChatMessage[];
+  private notes: Map<string, Note>;
 
   constructor() {
     this.users = new Map();
     this.chatMessages = [];
+    this.notes = new Map();
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -52,6 +59,48 @@ export class MemStorage implements IStorage {
     };
     this.chatMessages.push(message);
     return message;
+  }
+
+  async getNotes(): Promise<Note[]> {
+    return Array.from(this.notes.values()).sort((a, b) => 
+      new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
+    );
+  }
+
+  async getNote(id: string): Promise<Note | undefined> {
+    return this.notes.get(id);
+  }
+
+  async createNote(insertNote: InsertNote): Promise<Note> {
+    const id = randomUUID();
+    const now = new Date();
+    const note: Note = {
+      ...insertNote,
+      id,
+      created_at: now,
+      updated_at: now,
+    };
+    this.notes.set(id, note);
+    return note;
+  }
+
+  async updateNote(id: string, updateData: Partial<InsertNote>): Promise<Note | undefined> {
+    const existingNote = this.notes.get(id);
+    if (!existingNote) {
+      return undefined;
+    }
+
+    const updatedNote: Note = {
+      ...existingNote,
+      ...updateData,
+      updated_at: new Date(),
+    };
+    this.notes.set(id, updatedNote);
+    return updatedNote;
+  }
+
+  async deleteNote(id: string): Promise<boolean> {
+    return this.notes.delete(id);
   }
 }
 

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { insertChatMessageSchema } from "@shared/schema";
+import { insertChatMessageSchema, insertNoteSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Chat messages API
@@ -73,6 +73,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ws.on('error', (error) => {
       console.error('WebSocket error:', error);
     });
+  });
+
+  // Notes API routes
+  app.get("/api/notes", async (req, res) => {
+    try {
+      const notes = await storage.getNotes();
+      res.json(notes);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch notes" });
+    }
+  });
+
+  app.get("/api/notes/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const note = await storage.getNote(id);
+      if (!note) {
+        return res.status(404).json({ error: "Note not found" });
+      }
+      res.json(note);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch note" });
+    }
+  });
+
+  app.post("/api/notes", async (req, res) => {
+    try {
+      const validatedNote = insertNoteSchema.parse(req.body);
+      const note = await storage.createNote(validatedNote);
+      res.status(201).json(note);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid note data" });
+    }
+  });
+
+  app.put("/api/notes/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const validatedNote = insertNoteSchema.partial().parse(req.body);
+      const note = await storage.updateNote(id, validatedNote);
+      if (!note) {
+        return res.status(404).json({ error: "Note not found" });
+      }
+      res.json(note);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid note data" });
+    }
+  });
+
+  app.delete("/api/notes/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteNote(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Note not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete note" });
+    }
   });
 
   return httpServer;

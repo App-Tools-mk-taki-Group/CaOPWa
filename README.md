@@ -20,4 +20,8 @@ CaOPWa
 mikancat.mk.taki@gmail.com
 ```
 
+アプリなどのほかのことは、
+https://github.com/mikancat-taki/mikancat-CaOPWa/blob/main/%E3%82%A2%E3%83%97%E3%83%AA%E3%81%AE%E4%BD%BF%E3%81%84%E3%82%84%E3%81%99%E3%81%95.md 
+https://github.com/mikancat-taki/mikancat-CaOPWa/blob/main/%E3%82%A2%E3%83%97%E3%83%AA%E8%AA%AC%E6%98%8E.md にあります
+
 2025©CaOPWa
